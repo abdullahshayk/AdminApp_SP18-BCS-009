@@ -1,24 +1,27 @@
-import { StatusBar  } from 'expo-status-bar';
-import React,{useState} from 'react';
-import { Button, StyleSheet, Text, View , TouchableOpacity , ScrollView} from 'react-native';
+import React, { useState , useEffect} from 'react';
+import { render } from 'react-dom';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert , ScrollView, Button} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { FlatList } from 'react-native-gesture-handler';
+import { color } from 'react-native-reanimated';
+import { Ionicons, FontAwesome } from '@expo/vector-icons';
 
-const Stack = createStackNavigator();
-const App=()=> {
+
+
+
+ const Stack = createStackNavigator();
+const App =() => {
   return (
     <NavigationContainer>
 
         <Stack.Navigator>
-          <Stack.Screen name="Home" component={HomeScreen} />
-        
+          <Stack.Screen 
+          name="Home" 
+          component={HomeScreen}
+          />
 
-          <Stack.Screen name="ProductScreen" component={ProductScreen} />
-          <Stack.Screen name="EmployeeScreen" component={EmployeeScreen} />
-          <Stack.Screen name="OrderScreen" component={OrderScreen} />
-          <Stack.Screen name="ProductDetailScreen" component={ProductDetailScreen} />
-          <Stack.Screen name="EmployeeDetailScreen" component={EmployeeDetailScreen} />
-          <Stack.Screen name="OrderDetailScreen" component={OrderDetailScreen} />
+          <Stack.Screen name="History" component={History} />
         
         </Stack.Navigator>
       </NavigationContainer>);
@@ -26,237 +29,458 @@ const App=()=> {
 }
 
 
-const HomeScreen =({navigation})=> {
 
-  const [getProductList,setProductList]=useState([
-    {key:1,Name:"Hand Sanitizer",Price:"500",image:"#NA", manufacturer:"Purell", ProductCode:"10991"},
-    {key:2,Name:"Body Spray",Price:"1000",image:"#NA", manufacturer:"Nivea", ProductCode:"10992"},
-    {key:3,Name:"Face Wash",Price:"1000",image:"#NA", manufacturer:"Garnier", ProductCode:"10993"}
-])
-  const [getEmployeeList,setEmployeeList]=useState([
-    {key:1,FirstName:"Abdullah", LastName:"Shayk",Designation:"CEO",image:"#NA", Company:"ios"},
-    {key:2,FirstName:"Fakhar", LastName:"Rana",Designation:"Software Developer",image:"#NA", Company:"ios"},
-    {key:3,FirstName:"Bukhtiar", LastName:"Murtaza",Designation:"Clerk",image:"#NA", Company:"ios"},
-   
-])
-  const [getOrderList,setOrderList]=useState([
-    {key:1,Orderno:"22",Product:" Body Spray",Price:"1000",ShippingPrice:"200", CustomerName:"Ali", OrderDate:"12/12/2020" },
-    {key:2,Orderno:"32",Product:" Face Wash",Price:"1000", ShippingPrice:"200",CustomerName:"Sara", OrderDate:"5/1/2021" },
-    {key:3,Orderno:"42",Product:" Hand Sanitizer",Price:"500",ShippingPrice:"200", CustomerName:"Manahil", OrderDate:"7/1/2021" },
-  
-   
-])
 
-  return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.HomeLabels} onPress={()=>navigation.navigate("ProductScreen",{productlist:getProductList})}>
-        <Text style={{fontWeight:"bold",fontSize:20, letterSpacing:3}}>Manage Products</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.HomeLabels} onPress={()=>navigation.navigate("EmployeeScreen",{Emp_list:getEmployeeList})}>
-        <Text style={{fontWeight:"bold",fontSize:20, letterSpacing:3}}>Manage Employee</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.HomeLabels} onPress={()=>navigation.navigate("OrderScreen",{Order_list:getOrderList})}>
-        <Text style={{fontWeight:"bold",fontSize:20, letterSpacing:3}}>Manage Orders</Text>
-      </TouchableOpacity>
-    
-    </View>
-  );
-}
-const ProductScreen =({navigation,route})=> {
-  const {productlist}=route.params
-  return (
-    <View style={styles.container}>
-      <Text style={{alignSelf:"flex-start", marginLeft:5,fontSize:25, fontWeight:"bold", letterSpacing:2}}>List of Products:</Text>
-      <ScrollView style={{marginTop:15}}>
-        {productlist.map((item, index) =>
-          <View key={item.key} >
-           <TouchableOpacity onPress={()=>navigation.navigate("ProductDetailScreen",{detail_list:productlist,key:item.key})}>
-            <View style={styles.productsContainer}>
-            <Text style={styles.productsProp}>{item.Name}</Text>
-            <Text style={styles.productsProp}>{item.Price}</Text>
-            <Text style={styles.productsProp}>{item.image}</Text>
-            </View>
-            </TouchableOpacity>
-          </View>)}
-          
-      </ScrollView>
-    
-      <StatusBar style="auto" />
-    </View>
-  );
-}
-const ProductDetailScreen =({navigation,route})=> {
-  const{detail_list}=route.params;
-  const{key}=route.params
-  
-  
-  var rlist=(detail_list.filter(detail_list=> detail_list.key==key));
-  
-  return (
-    <View style={styles.container}>
-      <ScrollView style={{marginTop:15}}>
-        {rlist.map((item, index) =>
-          <View key={item.key} >
-           
-            <View style={styles.productsDetailContainer}>
-            <Text style={styles.productsDetailProp}>Product Name:  {item.Name}</Text>
-            <Text style={styles.productsDetailProp}>Product Code:  {item.ProductCode}</Text>
-            <Text style={styles.productsDetailProp}>Product Price:  {item.Price}</Text>
-            <Text style={styles.productsDetailProp}>Product Manufacturer:  {item.manufacturer}</Text>
-            <Text style={styles.productsDetailProp}>Product Image:  {item.image}</Text>
-            </View>
-          </View>)}
-          
-      </ScrollView>
-     
-    </View>
-  );
-}
-const EmployeeScreen =({navigation,route})=> {
-  const {Emp_list}=route.params
-  return (
-    <View style={styles.container}>
-      <Text style={{alignSelf:"flex-start", marginLeft:5,fontSize:25, fontWeight:"bold", letterSpacing:2}}>Employees:</Text>
-      <ScrollView style={{marginTop:15}}>
-        {Emp_list.map((item, index) =>
-          <View key={item.key} >
-           <TouchableOpacity onPress={()=>navigation.navigate("EmployeeDetailScreen",{Emp_detail_list:Emp_list,key:item.key})}>
-            <View style={styles.productsContainer}>
-            <Text style={styles.productsProp}>{item.FirstName}</Text>
-            <Text style={styles.productsProp}>{item.Designation}</Text>
-          
-            </View>
-            </TouchableOpacity>
-          </View>)}
-          
-      </ScrollView>
-    
-      <StatusBar style="auto" />
-    </View>
-  );
-}
-const EmployeeDetailScreen =({navigation,route})=> {
-  const{Emp_detail_list}=route.params;
-  const{key}=route.params
+const HomeScreen =({navigation,route}) => {
+  const [getOriginalPrice, setOriginalPrice] = useState()
+  const [getDiscountPercentage, setDiscountPercentage] = useState()
+  const [getYouSave, setYouSave] = useState()
+  const [getFinalPrice, setFinalPrice] = useState()
+  const [getCheck, setCheck] = useState(false)
+  const [getNANCheck, setNANCheck] = useState(false)
+  const [getList, setList] = useState([])
 
-  var rlist=(Emp_detail_list.filter(Emp_detail_list=> Emp_detail_list.key==key));
+  useEffect(() => {
+
+    if (route.params?.returnList) {
+      setList(route.params.returnList);
+      navigation.setParams({ returnList: undefined });
+
+    }
+  });
+
+
+  React.useLayoutEffect(()=>{
+    navigation.setOptions({
+      title:"Discount App",
+      headerTintColor:"#292929",
+      headerStyle:{
+        backgroundColor:"grey",
+       },
+      headerRight: () => (
+        <View style={{ paddingRight: 10 }}>
+          <TouchableOpacity 
+            onPress={()=>NavigationToHistoryScreen()} 
+            style={{width:100,height:35 ,backgroundColor:"#ff8600",  borderRadius: 15 , alignItems:"center", justifyContent:"center"}} >
+            <Text style={{fontWeight:"bold"}}>View History</Text></TouchableOpacity>
+        </View>
+      ),
+    });
+  });
+
  
-  return (
-    <View style={styles.container}>
-      <ScrollView style={{marginTop:15}}>
-        {rlist.map((item, index) =>
-          <View key={item.key} >
-           
-            <View style={styles.productsDetailContainer}>
-            <Text style={styles.productsDetailProp}>First Name:  {item.FirstName}</Text>
-            <Text style={styles.productsDetailProp}>Last Name:  {item.LastName}</Text>
-            <Text style={styles.productsDetailProp}>Designation:  {item.Designation}</Text>
-            <Text style={styles.productsDetailProp}>Company:  {item.Company}</Text>
-            <Text style={styles.productsDetailProp}>Image:  {item.image}</Text>
-            </View>
-          </View>)}
-          
-      </ScrollView>
+  const reset=()=>{
+    setOriginalPrice()
+    setDiscountPercentage()
+    setFinalPrice()
+    setYouSave()
+    setCheck(false)
+  }
+
+
+  const ADDList = () => {
+      if(getCheck==true && getNANCheck==true){
+        setList([...getList,
+        {key: Math.random().toString(), OriginalPrice: getOriginalPrice, DiscountP: getDiscountPercentage , FP: getFinalPrice }]);
+        alert("Saved!")
+        reset();
+    }
+    else if(getNANCheck==false){
+      alert("Some of the Inputs are Invalid")
+    }
+    else{
      
-    </View>
+        alert("Problem")
+      
+    }
+  }
+
+  
+ const calculate=()=>{
+
+    if( getOriginalPrice==null || getDiscountPercentage==null ){
+    
+      setCheck(false)
+      
+    }
+     if(getOriginalPrice<=0){
+      alert("Price  should be more than 0!!")
+      setCheck(false)
+
+    }
+    else if(getDiscountPercentage>100){
+      alert("Discount is never greater than 100")
+      setCheck(false)
+
+    }
+    else if(getDiscountPercentage<0){
+      alert("Discount is never lesser than 0")
+      setCheck(false)
+
+    }
+    else if(getOriginalPrice!=null && getDiscountPercentage!=null ){
+    const discount=getOriginalPrice-(getOriginalPrice*(getDiscountPercentage/100));
+    const saved=(getOriginalPrice-getOriginalPrice-(getOriginalPrice*(getDiscountPercentage/100)))
+  
+    setFinalPrice((discount).toFixed(2))
+    setYouSave(Math.abs(saved).toFixed(2))
+    setCheck(true)
+
+  }}
+
+
+  const NavigationToHistoryScreen =()=>{
+    navigation.navigate("History" , {list:getList});
+  }
+
+  const settingOriginalPrice=(OriginalPrice)=>{
+    if(isNaN(OriginalPrice)){
+      setNANCheck(false);
+      
+    }
+    else{
+    setOriginalPrice(OriginalPrice);
+    setNANCheck(true);
+    setFinalPrice();
+    setYouSave()
+    }
+  }
+  const settingDiscountP=(DiscountPercentage)=>{
+    if(isNaN(DiscountPercentage)){
+      setNANCheck(false);
+    }
+    else{
+    setDiscountPercentage(DiscountPercentage);
+    setNANCheck(true);
+    setFinalPrice();
+    setYouSave()
+
+    }
+  }
+  
+  
+
+  return (
+    <View style={styles.HomeContainer}>
+
+  <View style={{flexDirection:'row', marginTop:30 }}>
+     
+    <TextInput 
+     value={getOriginalPrice} 
+     style={styles.input} 
+     placeholder="Original price"  
+     placeholderTextColor="grey" 
+     keyboardType="number-pad"
+     onChangeText={(OriginalPrice)=> settingOriginalPrice(OriginalPrice)}
+     onSubmitEditing={()=>calculate()}
+     />
+    
+    <TextInput 
+    value={getDiscountPercentage} 
+    style={styles.input} 
+    placeholder="Discount   %" 
+    placeholderTextColor="grey" 
+    keyboardType="number-pad"
+    onChangeText={(DiscountPercentage)=> settingDiscountP(DiscountPercentage)}
+    onSubmitEditing={()=>calculate()}/>
+
+  </View>
+
+  <View style={styles.outputContainer}>
+    <TextInput 
+    editable={false} 
+    placeholderTextColor="#90967C" 
+    placeholder="Final  Price" 
+    style={styles.output}>{getFinalPrice}
+    </TextInput>
+
+    <TextInput 
+    editable={false} 
+    placeholderTextColor="#90967C" 
+    placeholder="You  Save" 
+    style={styles.output}>{getYouSave}
+    </TextInput>
+  </View>
+
+
+
+    <CustomButton 
+    
+    text="Save"
+    onPressEvent={ADDList}
+    disabled={getOriginalPrice==null || getDiscountPercentage==null || getFinalPrice==null}
+    
+    
+    >
+
+     
+    </CustomButton>
+
+</View>
   );
 }
-const OrderScreen =({navigation,route})=> {
-  const {Order_list}=route.params
+
+
+const History =({navigation, route}) => {
+  const {list} = route.params;
+  const [getHistoryList, setHistoryList] = useState([...list]);
+  React.useLayoutEffect(()=>{
+      navigation.setOptions({
+      title:"History",
+      headerTitleAlign:"center",
+      headerTintColor:"#292929",
+      headerStyle:{
+        backgroundColor:"grey",
+      },
+      headerLeft: () => (
+        <View style={{ marginLeft:15}}>
+          <TouchableOpacity 
+            onPress={()=>NavigationToHomeScreen()} 
+            style={{width:70,height:30 ,backgroundColor:"#ff8600",  borderRadius: 15 , alignItems:"center", justifyContent:"center"}} >
+            <Text style={{fontWeight:"bold"}}>Go back</Text></TouchableOpacity>
+        </View>
+      ),
+      headerRight: () => (
+        <View style={{ marginLeft:15}}>
+          <TouchableOpacity 
+           onPress={()=>cleartAlert()} 
+            style={{width:70,height:30 ,backgroundColor:"black",  borderRadius: 15 , alignItems:"center", justifyContent:"center", marginRight:7,}} >
+            <Text style={{ letterSpacing:1 , color:"#ffff", fontWeight:"bold"}}>Clear</Text></TouchableOpacity>
+        </View>
+      ),
+    });
+  });
+  
+ 
+  
+ 
+  const removeItem =(itemKey)=>{
+    var rList=getHistoryList.filter(item=> item.key!=itemKey);
+    setHistoryList(rList);
+  }
+  const ClearHistory =()=>{
+    
+    setHistoryList([]);
+  }
+
+  
+  const cleartAlert = () =>
+    Alert.alert(
+      "Are you Sure?",
+      "Press OK to delete the entire History",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "OK", onPress: () => ClearHistory() }
+      ],
+      { cancelable: false }
+    );
+
+
+  const NavigationToHomeScreen=()=>{
+    navigation.navigate("Home" , {returnList:getHistoryList});
+  }
+
   return (
-    <View style={styles.container}>
-      <Text style={{alignSelf:"flex-start", marginLeft:5,fontSize:25, fontWeight:"bold", letterSpacing:2}}>Employees:</Text>
-      <ScrollView style={{marginTop:15}}>
-        {Order_list.map((item, index) =>
-          <View key={item.key} >
-           <TouchableOpacity onPress={()=>navigation.navigate("OrderDetailScreen",{Order_detail_list:Order_list,key:item.key})}>
-            <View style={styles.productsContainer}>
-            <Text style={styles.productsProp}>{item.Orderno}</Text>
-            <Text style={styles.productsProp}>{item.Price}</Text>
-          
-            </View>
+    <View style={styles.HistoryContainer}>
+      <View style={styles.ColumnsContainer}>
+        <Text style={styles.Columns}> Orginal Price  </Text>
+        <Text style={styles.Columns}> Discount%  </Text>
+        <Text style={styles.Columns}> Final Price </Text>
+     </View>
+     
+     <ScrollView>
+        {getHistoryList.map((item, index) =>
+          <View key={item.key} style={{flexDirection:"row" , marginRight:3, marginTop:20}} >
+            <TouchableOpacity  
+            style={styles.Xbtn} onPress={()=>removeItem(item.key)}>
+              <Text style={{color:"#ffff", fontSize:18, fontWeight:"bold" }}>X</Text>
             </TouchableOpacity>
+            <View style={styles.HistoryItemsContainer}>
+            <Text style={styles.HistoryItems1}>{item.OriginalPrice}</Text>
+            <Text style={styles.HistoryItems2}>{ item.DiscountP }</Text>
+            <Text style={styles.HistoryItems3}>{item.FP}</Text>
+            </View>
           </View>)}
           
       </ScrollView>
     
-      <StatusBar style="auto" />
-    </View>
-  );
-}
-const OrderDetailScreen =({navigation,route})=> {
-  const{Order_detail_list}=route.params;
-  const{key}=route.params
 
-  var rlist=(Order_detail_list.filter(Order_detail_list=> Order_detail_list.key==key));
- 
-  return (
-    <View style={styles.container}>
-      <ScrollView style={{marginTop:15}}>
-        {rlist.map((item, index) =>
-          <View key={item.key} >
-           
-            <View style={styles.productsDetailContainer}>
-            <Text style={styles.productsProp}>Order #:  {item.Orderno}</Text>
-            <Text style={styles.productsProp}>Order Price: {item.Price}</Text>
-            <Text style={styles.productsProp}>Shipping Price: {item.ShippingPrice}</Text>
-            <Text style={styles.productsDetailProp}>Customer Nama:  {item.CustomerName}</Text>
-            <Text style={styles.productsDetailProp}>Shipping Date:  {item.OrderDate}</Text>
-            
-            </View>
-          </View>)}
-          
-      </ScrollView>
-     
-    </View>
-  );
+      
+
+  </View>
+  )
 }
+
+
+const CustomButton=(props)=>{
+  if (props.disabled){
+    var btnColor="grey";
+  }
+  else {
+     btnColor= props.color != undefined ? props.color:"#ff8600";
+  }
+  return(
+    <View>
+      <TouchableOpacity 
+      activeOpacity={0.5}
+      onPress={props.onPressEvent}
+      disabled={props.disabled}
+      style={{...styles.EndBTN, backgroundColor:btnColor}}
+      
+      >
+        <Text style={{fontSize:20 ,fontWeight:"bold", letterSpacing:3}}>{props.text}</Text>
+      </TouchableOpacity>
+    </View>
+  )
+}
+
+
+
+
 
 const styles = StyleSheet.create({
-  container: {
+  HomeContainer: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor:"#292929",
     alignItems: 'center',
     justifyContent: 'center',
+    
   },
-  HomeLabels:{
-    marginBottom:40
+  HistoryContainer: {
+    flex: 1,
+    backgroundColor: "#292929",
+    alignItems: 'center',
+    
   },
-  productsProp:{
+  input:{
+    borderWidth:0.9,
+    margin:7,
+    letterSpacing:1,
+    borderRadius:15,
+    borderColor:"grey",
+    color:"grey",
+    height:40,
+    width:160,
+    textAlign:"center",
     fontSize:20,
-    marginEnd:45,
-    marginBottom:5
+    fontWeight:"bold"
+   
+    
+  },
+  CalculateBTN:{
+    backgroundColor:"#87cefa",
+    padding:8,
+    width:120,
+    textAlign:"center",
+    alignItems:"center",
+    borderRadius:19,
+    marginTop:-29
+  
+
+  },
+  output:{
+    
+    fontSize:25,
+    fontWeight:"bold",
+    margin:20,
+    borderBottomWidth:4,
+    color:"grey",
+    width:200,
+    letterSpacing:4,
+    
+    padding:10,
+    borderColor:"grey",
+    justifyContent:"center",
+    alignItems:"center",
+    textAlign:"center"
+
+  },
+  outputContainer:{
+    
+   
+
+
+  },
+  EndBTN:{
+    backgroundColor:"#ff8600",
+    padding:8,
+    width:135,
+    textAlign:"center",
+    alignItems:"center",
+    borderRadius:32,
+    marginTop:40
+  },
+  
+  
+  ColumnsContainer:{
+    flexDirection: "row",
+    marginTop:20,
+    textAlign:"center"
+
+  },
+  Columns:{
+    width:120,
+    fontSize:17,
+    fontWeight:"bold",
+    textAlign:"center",
+    color:"grey"
     
 
   },
-  productsContainer:{
-    flexDirection:"row",
-    marginTop:10,
-    borderBottomWidth:2,
-    marginBottom:20
-  
-    
+  HistoryItems1:{
+    fontSize: 18,  
+     color:"grey",
+     position:"absolute",
+     marginLeft:5,
+     left:0,
+    fontWeight:"bold"
   },
-  productsDetailContainer:{
+  HistoryItems2:{
+    fontSize: 18,  
+    position:"absolute",
+     left:130,
+    color:"grey",
+    fontWeight:"bold"
+  },
+  HistoryItems3:{
+    fontSize: 18,  
+position:"absolute",
+right:0,
+marginRight:5,
+    color:"grey",
+    fontWeight:"bold"
+  },
+  HistoryItemsContainer:{
+    flexDirection: "row",
+    borderColor:"grey",
+    borderWidth:2,
+    borderRadius:10,
+    marginBottom:10,
+    height: 30,
+    width:310
 
-    marginTop:10,
- 
-    marginBottom:20
-  
-    
-  },
-  productsDetailProp:{
 
-    marginTop:10,
- borderWidth:2,
- width:350,
- padding:10,
- fontWeight:"bold",
- fontSize:20,
-    marginBottom:10
-  
     
   },
+  Xbtn:{
+    backgroundColor:"red",
+    width:30,
+    height:30,
+    borderRadius:15,
+    alignContent:"center",
+    justifyContent:"center",
+    alignItems:"center",
+    marginRight:10
+    
+
+
+  
+  },
+
+
 });
-
-export default App;
+export default App;;
